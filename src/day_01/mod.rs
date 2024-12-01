@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use itertools::Itertools;
 use nom::{character::complete::*, multi::*, sequence::separated_pair};
 
@@ -27,22 +29,13 @@ pub fn part_1(input: &Input) -> u32 {
 
 #[aoc(day01, part2)]
 pub fn part_2(input: &Input) -> u32 {
-    let left = input.iter().map(|elm| elm.0).sorted().collect_vec();
-    let right = input.iter().map(|elm| elm.1).sorted().collect_vec();
+    let left = input.iter().map(|elm| elm.0).sorted();
+    let mut right = input.iter().map(|elm| elm.1).sorted().peekable();
 
     let mut sum = 0;
-    let mut r_idx = 0;
-    for num in left {
-        while matches!(right.get(r_idx), Some(x) if *x < num) {
-            r_idx += 1;
-        }
-        let mut count = 0;
-        let mut temp_idx = r_idx;
-        while right.get(temp_idx) == Some(&num) {
-            count += 1;
-            temp_idx += 1;
-        }
-        sum += num * count;
+    for l_num in left {
+        let _ = right.peeking_take_while(|r_num| *r_num < l_num).last();
+        sum += l_num * right.clone().take_while(|r_num| *r_num == l_num).count() as u32;
     }
 
     sum
