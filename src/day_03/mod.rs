@@ -5,7 +5,7 @@ use regex::Regex;
 pub type Input = str;
 
 static MUL_REGEX: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new("do\\(\\)|don't\\(\\)|mul\\((\\d{1,3}),(\\d{1,3})\\)").unwrap());
+    LazyLock::new(|| Regex::new(r#"do\(\)|don't\(\)|mul\((\d{1,3}),(\d{1,3})\)"#).unwrap());
 
 #[aoc(day3, part1)]
 pub fn part_1(input: &Input) -> u32 {
