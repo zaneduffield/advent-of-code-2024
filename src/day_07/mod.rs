@@ -44,9 +44,7 @@ fn satisfiable_rev<const N: usize>(
 }
 
 fn remove_trailing_num(num: i64, on: i64) -> Option<i64> {
-    let digits = ((on as f64).log(10.0) + 1.0) as u32;
-
-    let (quot, rem) = num.div_rem(&10i64.pow(digits));
+    let (quot, rem) = num.div_rem(&10i64.pow(on.ilog10() + 1));
     (rem == on).then_some(quot)
 }
 
