@@ -17,18 +17,20 @@ macro_rules! input_str {
 }
 
 macro_rules! run_parts {
-    ($m:ident, $d:expr, $g:expr) => {
-        let instant = Instant::now();
+    ($m:ident, $d:expr$(, $g:expr)?) => {
+        let mut instant = Instant::now();
         let input = input_str!($d);
-        let processed_input = $g(&input);
-        println!(
-            "day {0}-1: {1}\nday {0}-2: {2}",
-            $d,
-            $m::part_1(&processed_input),
-            $m::part_2(&processed_input)
-        );
-
-        println!("{:?}\n", instant.elapsed());
+        $(
+            let input = $g(&input);
+            println!("day {}-parse ({:.1?})", $d, instant.elapsed());
+            instant = Instant::now();
+        )?
+        let part1 = $m::part_1(&input);
+        println!("day {}-1 ({:7.1?}): {}", $d, instant.elapsed(), part1);
+        instant = Instant::now();
+        let part2 = $m::part_2(&input);
+        println!("day {}-2 ({:7.1?}): {}", $d, instant.elapsed(), part2);
+        println!();
     };
 }
 
@@ -40,7 +42,7 @@ macro_rules! run_day_with_generator {
 
 macro_rules! run_day {
     ($m:ident, $d:expr) => {
-        run_parts!($m, $d, |i| i);
+        run_parts!($m, $d);
     };
 }
 
