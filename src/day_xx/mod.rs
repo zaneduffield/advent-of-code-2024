@@ -25,12 +25,10 @@ pub fn input_generator(input: &str) -> Input {
     result
 }
 
-#[aoc(dayxx, part1)]
 pub fn part_1(input: &Input) -> u32 {
     0
 }
 
-#[aoc(dayxx, part2)]
 pub fn part_2(input: &Input) -> u32 {
     0
 }
