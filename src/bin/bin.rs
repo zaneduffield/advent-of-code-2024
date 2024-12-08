@@ -40,6 +40,7 @@ macro_rules! run_day_with_generator {
     };
 }
 
+#[allow(unused)]
 macro_rules! run_day {
     ($m:ident, $d:expr) => {
         run_parts!($m, $d);
@@ -50,7 +51,7 @@ pub fn main() {
     let instant = Instant::now();
     run_day_with_generator!(day_01, "1");
     run_day_with_generator!(day_02, "2");
-    run_day!(day_03, "3");
+    run_day_with_generator!(day_03, "3");
     run_day_with_generator!(day_04, "4");
     run_day_with_generator!(day_05, "5");
     run_day_with_generator!(day_06, "6");
