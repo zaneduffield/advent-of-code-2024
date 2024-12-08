@@ -64,7 +64,6 @@ fn parse_input(input: &str) -> Input {
     }
 }
 
-#[aoc_generator(day6)]
 pub fn input_generator(input: &str) -> Input {
     parse_input(input)
 }
@@ -101,7 +100,6 @@ fn print(input: &Input, pos: Pos, dir: Dir) {
     eprintln!("=======================");
 }
 
-#[aoc(day6, part1)]
 pub fn part_1(input: &Input) -> u32 {
     let mut pos = input.start;
     let mut dir = input.dir;
@@ -160,7 +158,6 @@ fn is_cyclic(cycle: &mut CycleSet, input: &Input, mut pos: Pos, mut dir: Dir) ->
     }
 }
 
-#[aoc(day6, part2)]
 pub fn part_2(input: &Input) -> u32 {
     let mut input = input.clone();
 

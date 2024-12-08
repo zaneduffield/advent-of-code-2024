@@ -11,14 +11,12 @@ fn parse_input(input: &str) -> nom::IResult<&str, Input> {
     ))
 }
 
-#[aoc_generator(day4)]
 pub fn input_generator(input: &str) -> Input {
     let (remaining, result) = parse_input(input).expect("failed to parse input");
     assert!(remaining.trim().is_empty(), "failed to parse entire input");
     result
 }
 
-#[aoc(day4, part1)]
 pub fn part_1(input: &Input) -> u32 {
     let mut solutions = 0;
     for (y, row) in input.data.iter().enumerate() {
@@ -66,7 +64,6 @@ pub fn part_1(input: &Input) -> u32 {
     solutions
 }
 
-#[aoc(day4, part2)]
 pub fn part_2(input: &Input) -> u32 {
     let mut solutions = 0;
     for (y, row) in input.data.iter().enumerate() {

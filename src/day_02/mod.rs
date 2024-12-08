@@ -22,7 +22,6 @@ fn parse_input(input: &str) -> nom::IResult<&str, Input> {
         .parse(input)
 }
 
-#[aoc_generator(day2)]
 pub fn input_generator(input: &str) -> Input {
     let (remaining, result) = parse_input(input).expect("failed to parse input");
     assert!(remaining.trim().is_empty(), "failed to parse entire input");
@@ -68,12 +67,10 @@ fn solve(input: &Input, allow_skip: bool) -> u32 {
         .count() as u32
 }
 
-#[aoc(day2, part1)]
 pub fn part_1(input: &Input) -> u32 {
     solve(input, false)
 }
 
-#[aoc(day2, part2)]
 pub fn part_2(input: &Input) -> u32 {
     solve(input, true)
 }

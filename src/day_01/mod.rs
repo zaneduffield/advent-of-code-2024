@@ -18,14 +18,12 @@ fn parse_input(input: &str) -> nom::IResult<&str, Input> {
     ))
 }
 
-#[aoc_generator(day01)]
 pub fn input_generator(input: &str) -> Input {
     let (remaining, result) = parse_input(input).expect("failed to parse input");
     assert!(remaining.trim().is_empty(), "failed to parse entire input");
     result
 }
 
-#[aoc(day01, part1)]
 pub fn part_1(input: &Input) -> u32 {
     input
         .left
@@ -35,7 +33,6 @@ pub fn part_1(input: &Input) -> u32 {
         .sum()
 }
 
-#[aoc(day01, part2)]
 pub fn part_2(input: &Input) -> u32 {
     let mut right = input.right.iter().peekable();
 

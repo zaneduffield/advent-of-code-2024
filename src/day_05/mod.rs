@@ -32,7 +32,6 @@ fn parse_input(input: &str) -> Input {
     Input { before_map, pages }
 }
 
-#[aoc_generator(day5)]
 pub fn input_generator(input: &str) -> Input {
     parse_input(input)
 }
@@ -74,7 +73,6 @@ fn reorder_page(input: &Input, page: &mut [u8]) {
     }
 }
 
-#[aoc(day5, part1)]
 pub fn part_1(input: &Input) -> u32 {
     input
         .pages
@@ -84,7 +82,6 @@ pub fn part_1(input: &Input) -> u32 {
         .sum()
 }
 
-#[aoc(day5, part2)]
 pub fn part_2(input: &Input) -> u32 {
     input
         .pages

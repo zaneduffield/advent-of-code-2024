@@ -7,7 +7,6 @@ pub type Input = str;
 static MUL_REGEX: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r#"do\(\)|don't\(\)|mul\((\d{1,3}),(\d{1,3})\)"#).unwrap());
 
-#[aoc(day3, part1)]
 pub fn part_1(input: &Input) -> u32 {
     MUL_REGEX
         .captures_iter(input)
@@ -20,7 +19,6 @@ pub fn part_1(input: &Input) -> u32 {
         .sum()
 }
 
-#[aoc(day3, part2)]
 pub fn part_2(input: &Input) -> u32 {
     let mut enabled = true;
     MUL_REGEX
