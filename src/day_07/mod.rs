@@ -1,5 +1,4 @@
 use nom::{bytes::complete::*, character::complete::*, multi::*, sequence::separated_pair};
-use num::Integer;
 
 pub struct Input {
     equations: Vec<Eq>,
@@ -43,12 +42,13 @@ fn satisfiable_rev<const N: usize>(
 }
 
 fn remove_trailing_num(num: i64, on: i64) -> Option<i64> {
-    let (quot, rem) = num.div_rem(&10i64.pow(on.ilog10() + 1));
+    let divisor = 10i64.pow(on.ilog10() + 1);
+    let (quot, rem) = (num / divisor, num % divisor);
     (rem == on).then_some(quot)
 }
 
 fn try_div(num: i64, denom: i64) -> Option<i64> {
-    let (quot, rem) = num.div_rem(&denom);
+    let (quot, rem) = (num / denom, num % denom);
     (rem == 0).then_some(quot)
 }
 
