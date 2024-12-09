@@ -85,10 +85,10 @@ pub fn part_2(input: &Input) -> u64 {
                 empty_size += 1;
                 if empty_size == group_size {
                     // found large enough spot, move the block
-                    input
-                        .data
-                        .copy_within(right..(right + group_size), left + 1 - group_size);
-                    input.data[right..(right + group_size)].fill(EMPTY_ID);
+                    let left_start = left + 1 - group_size;
+                    for i in 0..group_size {
+                        input.data.swap(right + i, left_start + i);
+                    }
                     last_pos[group_size] = left;
                     break;
                 }
