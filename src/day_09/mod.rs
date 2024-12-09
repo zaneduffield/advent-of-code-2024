@@ -65,13 +65,23 @@ pub fn part_1(input: &Input) -> u64 {
 pub fn part_2(input: &Input) -> u64 {
     let mut input = input.clone();
 
+    let mut empties = vec![];
+    let mut pos = 0;
+    let mut empty_size = 0;
+    while pos < input.data.len() {
+        if input.data[pos] == EMPTY_ID {
+            empty_size += 1;
+        } else {
+            if empty_size > 0 {
+                empties.push((empty_size, pos - empty_size));
+            }
+            empty_size = 0;
+        }
+        pos += 1;
+    }
+
     let mut right = input.data.len() - 1;
     while (0..input.data.len()).contains(&right) {
-        #[cfg(debug_assertions)]
-        {
-            eprintln!("{:?}", input.data);
-        }
-
         let id = input.data[right];
         if id == EMPTY_ID {
             right = right.wrapping_sub(1);
@@ -84,26 +94,29 @@ pub fn part_2(input: &Input) -> u64 {
             right = right.wrapping_sub(1);
         }
 
-        let mut left = 0;
-        let mut empty_size = 0;
-        while left < right {
-            if input.data[left] == EMPTY_ID {
-                empty_size += 1;
-                if empty_size == group_size {
-                    // found large enough spot, move the block
-                    input
-                        .data
-                        .copy_within(right..(right + group_size), left + 1 - group_size);
-                    // TODO memset?
-                    for idx in right..(right + group_size) {
-                        input.data[idx] = EMPTY_ID;
-                    }
-                    break;
+        if let Some((empty_idx, &(empty_size, empty_pos))) = empties
+            .iter()
+            .enumerate()
+            .find(|(_idx, (size, _pos))| *size >= group_size)
+        {
+            if empty_pos < right {
+                // found large enough spot, move the block
+                input
+                    .data
+                    .copy_within(right..(right + group_size), empty_pos);
+                // TODO memset?
+                for idx in right..(right + group_size) {
+                    input.data[idx] = EMPTY_ID;
                 }
-            } else {
-                empty_size = 0;
+
+                // we may have just created a new empty position, by splitting the old one
+                empties.remove(empty_idx);
+                let new_empty = (empty_size - group_size, empty_pos + group_size);
+                if new_empty.0 > 0 {
+                    let insert_pos = empties.partition_point(|(_size, pos2)| *pos2 < empty_pos);
+                    empties.insert(insert_pos, new_empty);
+                }
             }
-            left += 1;
         }
 
         right = right.wrapping_sub(1);
