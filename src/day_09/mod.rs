@@ -22,14 +22,10 @@ pub fn input_generator(input: &str) -> Input {
     let mut data = Vec::with_capacity(input.len() * 5);
     let mut input = input.trim_end().bytes();
     let mut id = 0i16;
-    loop {
-        if let Some(count) = input.next() {
-            match count {
-                b'0'..=b'9' => data.extend(std::iter::repeat_n(id, (count - b'0') as usize)),
-                _ => panic!("unexpected byte: {count}"),
-            }
-        } else {
-            break;
+    while let Some(count) = input.next() {
+        match count {
+            b'0'..=b'9' => data.extend(std::iter::repeat_n(id, (count - b'0') as usize)),
+            _ => panic!("unexpected byte: {count}"),
         }
         id = id.checked_add(1).expect("ID should not overflow");
         if let Some(count) = input.next() {
