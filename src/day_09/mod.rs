@@ -1,5 +1,3 @@
-use std::collections::BTreeMap;
-
 const EMPTY_ID: i16 = -1;
 
 #[derive(Clone)]
@@ -63,20 +61,8 @@ pub fn part_1(input: &Input) -> u64 {
 pub fn part_2(input: &Input) -> u64 {
     let mut input = input.clone();
 
-    let mut empties = BTreeMap::<usize, usize>::default();
-    let mut pos = 0;
-    let mut empty_size = 0;
-    while pos < input.data.len() {
-        if input.data[pos] == EMPTY_ID {
-            empty_size += 1;
-        } else {
-            if empty_size > 0 {
-                empties.insert(pos - empty_size, empty_size);
-            }
-            empty_size = 0;
-        }
-        pos += 1;
-    }
+    // (ab)using the fact that 10 is the maximum size
+    let mut last_pos = [0usize; 10];
 
     let mut right = input.data.len() - 1;
     while (0..input.data.len()).contains(&right) {
@@ -92,28 +78,24 @@ pub fn part_2(input: &Input) -> u64 {
             right = right.wrapping_sub(1);
         }
 
-        if let Some((&empty_pos, &empty_size)) = empties
-            .iter()
-            .take_while(|(idx, _size)| **idx < right)
-            .find(|(_idx, size)| **size >= group_size)
-        {
-            if empty_pos < right {
-                // found large enough spot, move the block
-                input
-                    .data
-                    .copy_within(right..(right + group_size), empty_pos);
-                // TODO memset?
-                for idx in right..(right + group_size) {
-                    input.data[idx] = EMPTY_ID;
+        let mut left = last_pos[group_size];
+        let mut empty_size = 0;
+        while left < right {
+            if input.data[left] == EMPTY_ID {
+                empty_size += 1;
+                if empty_size == group_size {
+                    // found large enough spot, move the block
+                    input
+                        .data
+                        .copy_within(right..(right + group_size), left + 1 - group_size);
+                    input.data[right..(right + group_size)].fill(EMPTY_ID);
+                    last_pos[group_size] = left;
+                    break;
                 }
-
-                // we may have just created a new empty position, by splitting the old one
-                empties.remove(&empty_pos);
-                let excess_space = empty_size - group_size;
-                if excess_space > 0 {
-                    empties.insert(empty_pos + group_size, excess_space);
-                }
+            } else {
+                empty_size = 0;
             }
+            left += 1;
         }
 
         right = right.wrapping_sub(1);
