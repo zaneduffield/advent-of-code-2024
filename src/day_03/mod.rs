@@ -1,7 +1,7 @@
 use winnow::{
     ascii::dec_uint,
     combinator::{alt, opt},
-    token::{one_of, tag, take_till, take_till1, take_until},
+    token::{literal, one_of, take_till},
     Parser,
 };
 
@@ -15,9 +15,15 @@ pub enum Instruction {
 
 fn parse_instruction(input: &mut &str) -> winnow::PResult<Instruction> {
     alt((
-        tag("do()").map(|_| Instruction::Do),
-        tag("don't()").map(|_| Instruction::Dont),
-        (tag("mul("), dec_uint, one_of(','), dec_uint, one_of(')'))
+        literal("do()").map(|_| Instruction::Do),
+        literal("don't()").map(|_| Instruction::Dont),
+        (
+            literal("mul("),
+            dec_uint,
+            one_of(','),
+            dec_uint,
+            one_of(')'),
+        )
             .map(|(_, left, _, right, _)| Instruction::Mul(left, right)),
     ))
     .parse_next(input)
@@ -30,7 +36,7 @@ fn take_until_instruction<'i>(input: &mut &'i str) -> winnow::PResult<Option<&'i
 // regex would be easier, but this is faster
 fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
     let mut instructions = vec![];
-    while let Ok(_) = take_until_instruction(input) {
+    while take_until_instruction(input).is_ok() {
         if let Ok(inst) = parse_instruction(input) {
             instructions.push(inst);
         } else if input.is_empty() {

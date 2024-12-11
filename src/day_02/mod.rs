@@ -15,13 +15,13 @@ pub struct Input {
 }
 
 fn parse_report(input: &mut &str) -> winnow::PResult<Report> {
-    separated1(dec_uint::<_, u32, _>, space1)
+    separated(1.., dec_uint::<_, u32, _>, space1)
         .map(|nums| Report { nums })
         .parse_next(input)
 }
 
 fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
-    separated0(parse_report, line_ending)
+    separated(0.., parse_report, line_ending)
         .map(|reports| Input { reports })
         .parse_next(input)
 }

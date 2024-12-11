@@ -11,8 +11,8 @@ pub struct Input {
 }
 
 fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
-    let lines: Vec<_> =
-        separated0(separated_pair(dec_uint, space1, dec_uint), line_ending).parse_next(input)?;
+    let lines: Vec<_> = separated(0.., separated_pair(dec_uint, space1, dec_uint), line_ending)
+        .parse_next(input)?;
 
     Ok(Input {
         left: lines.iter().map(|line| line.0).sorted_unstable().collect(),

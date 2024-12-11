@@ -1,7 +1,7 @@
 use winnow::{
     ascii::{dec_int, line_ending, space1},
     combinator::*,
-    token::tag,
+    token::literal,
     Parser,
 };
 
@@ -12,8 +12,13 @@ pub struct Input {
 pub type Eq = (i64, Vec<i64>);
 
 fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
-    let equations = separated0(
-        separated_pair(dec_int, tag(": "), separated1(dec_int::<_, i64, _>, space1)),
+    let equations = separated(
+        0..,
+        separated_pair(
+            dec_int,
+            literal(": "),
+            separated(1.., dec_int::<_, i64, _>, space1),
+        ),
         line_ending,
     )
     .parse_next(input)?;
