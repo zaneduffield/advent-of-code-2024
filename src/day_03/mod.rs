@@ -20,11 +20,14 @@ fn parse_instruction(input: &str) -> winnow::IResult<&str, Instruction> {
         tag("don't()").map(|_| Instruction::Dont),
         (tag("mul("), dec_uint, one_of(','), dec_uint, one_of(')'))
             .map(|(_, left, _, right, _)| Instruction::Mul(left, right)),
-    ))(input)
+    ))
+    .parse_next(input)
 }
 
 fn take_until_instruction(input: &str) -> winnow::IResult<&str, &str> {
-    opt(take_till1("dm"))(input).map(|(rem, out)| (rem, out.unwrap_or("")))
+    opt(take_till1("dm"))
+        .parse_next(input)
+        .map(|(rem, out)| (rem, out.unwrap_or("")))
 }
 
 // regex would be easier, but this is faster

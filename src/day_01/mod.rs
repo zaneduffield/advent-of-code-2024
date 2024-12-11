@@ -3,6 +3,7 @@ use winnow::{
     character::{dec_uint, line_ending, space1},
     multi::*,
     sequence::separated_pair,
+    Parser,
 };
 
 pub struct Input {
@@ -12,7 +13,7 @@ pub struct Input {
 
 fn parse_input(input: &str) -> winnow::IResult<&str, Input> {
     let (input, lines): (&str, Vec<_>) =
-        separated0(separated_pair(dec_uint, space1, dec_uint), line_ending)(input)?;
+        separated0(separated_pair(dec_uint, space1, dec_uint), line_ending).parse_next(input)?;
 
     Ok((
         input,
