@@ -13,50 +13,31 @@ pub fn input_generator(mut input: &str) -> Input {
         .expect("failed to parse input")
 }
 
-fn expanded_len(mut num: u64, repetitions: u8, memoized: &mut FxHashMap<(u64, u8), u64>) -> u64 {
-    if let Some(len) = memoized.get(&(num, repetitions)) {
-        return *len;
-    }
+fn solve(input: &Input, repetitions: u8) -> u64 {
+    let mut rock_counts: FxHashMap<u64, u64> = input.iter().map(|num| (*num, 1)).collect();
+    let mut next_counts = FxHashMap::<u64, u64>::default();
 
-    for rep in 1..=repetitions {
-        if num == 0 {
-            num = 1;
-        } else {
-            let digits = num.ilog10() + 1;
-            if digits % 2 == 0 {
-                let divisor = 10u64.pow(digits / 2);
-                let reps_left = repetitions - rep;
-
-                return [num / divisor, num % divisor]
-                    .map(|split_num| {
-                        // Unfortunately we can't use the Entry API to make this more efficient,
-                        // because borrowck won't accept the `memoized` variable being used inside
-                        // the closure passed to `or_insert_with`. Polonius would probably solve it.
-                        if let Some(len) = memoized.get(&(split_num, reps_left)) {
-                            *len
-                        } else {
-                            let len = expanded_len(split_num, reps_left, memoized);
-                            memoized.insert((split_num, reps_left), len);
-                            len
-                        }
-                    })
-                    .iter()
-                    .sum();
+    for _ in 0..repetitions {
+        for (num, count) in rock_counts.drain() {
+            if num == 0 {
+                *next_counts.entry(1).or_default() += count;
             } else {
-                num *= 2024;
+                let digits = num.ilog10() + 1;
+                if digits % 2 == 0 {
+                    let divisor = 10u64.pow(digits / 2);
+
+                    *next_counts.entry(num / divisor).or_default() += count;
+                    *next_counts.entry(num % divisor).or_default() += count;
+                } else {
+                    *next_counts.entry(num * 2024).or_default() += count;
+                }
             }
         }
+
+        std::mem::swap(&mut rock_counts, &mut next_counts);
     }
 
-    1
-}
-
-fn solve(input: &Input, repetitions: u8) -> u64 {
-    let mut memo = FxHashMap::default();
-    input
-        .iter()
-        .map(|&num| expanded_len(num, repetitions, &mut memo))
-        .sum()
+    rock_counts.values().sum()
 }
 
 pub fn part_1(input: &Input) -> u64 {
