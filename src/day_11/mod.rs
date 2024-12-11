@@ -7,10 +7,8 @@ fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
     separated(0.., dec_uint::<_, u64, _>, space1).parse_next(input)
 }
 
-pub fn input_generator(mut input: &str) -> Input {
-    terminated(parse_input, (opt(line_ending), eof))
-        .parse_next(&mut input)
-        .expect("failed to parse input")
+pub fn input_generator(input: &str) -> Input {
+    parse_input.parse(input.trim_end()).unwrap()
 }
 
 fn solve(input: &Input, repetitions: u8) -> u64 {

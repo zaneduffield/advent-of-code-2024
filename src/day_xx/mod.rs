@@ -13,10 +13,8 @@ fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
     todo!()
 }
 
-pub fn input_generator(mut input: &str) -> Input {
-    terminated(parse_input, eof)
-        .parse_next(&mut input)
-        .expect("failed to parse input")
+pub fn input_generator(input: &str) -> Input {
+    parse_input.parse(input.trim_end()).unwrap()
 }
 
 pub fn part_1(input: &Input) -> u32 {

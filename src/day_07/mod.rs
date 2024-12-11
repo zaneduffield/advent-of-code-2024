@@ -12,7 +12,7 @@ pub struct Input {
 pub type Eq = (i64, Vec<i64>);
 
 fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
-    let equations = separated(
+    separated(
         0..,
         separated_pair(
             dec_int,
@@ -21,14 +21,12 @@ fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
         ),
         line_ending,
     )
-    .parse_next(input)?;
-    Ok(Input { equations })
+    .map(|equations| Input { equations })
+    .parse_next(input)
 }
 
-pub fn input_generator(mut input: &str) -> Input {
-    let result = parse_input(&mut input).expect("failed to parse input");
-    assert!(input.trim().is_empty(), "failed to parse entire input");
-    result
+pub fn input_generator(input: &str) -> Input {
+    parse_input.parse(input.trim_end()).unwrap()
 }
 
 // By working backwards from the end we are able to prune the search tree because of divisibility constraints.

@@ -26,10 +26,8 @@ fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
         .parse_next(input)
 }
 
-pub fn input_generator(mut input: &str) -> Input {
-    let result = parse_input(&mut input).expect("failed to parse input");
-    assert!(input.trim().is_empty(), "failed to parse entire input");
-    result
+pub fn input_generator(input: &str) -> Input {
+    parse_input.parse(input.trim_end()).unwrap()
 }
 
 impl Report {

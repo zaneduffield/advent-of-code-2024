@@ -1,20 +1,11 @@
-pub struct Input {
-    data: Vec<Vec<u8>>,
-}
-
-fn parse_input(input: &str) -> winnow::IResult<&str, Input> {
-    Ok((
-        "",
-        Input {
-            data: input.split('\n').map(|s| s.as_bytes().to_vec()).collect(),
-        },
-    ))
+pub struct Input<'a> {
+    data: Vec<&'a [u8]>,
 }
 
 pub fn input_generator(input: &str) -> Input {
-    let (remaining, result) = parse_input(input).expect("failed to parse input");
-    assert!(remaining.trim().is_empty(), "failed to parse entire input");
-    result
+    Input {
+        data: input.lines().map(|s| s.as_bytes()).collect(),
+    }
 }
 
 pub fn part_1(input: &Input) -> u32 {
