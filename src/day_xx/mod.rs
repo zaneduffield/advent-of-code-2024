@@ -1,8 +1,7 @@
 use winnow::{
-    token::complete::*,
-    character::complete::*,
-    multi::*,
-    sequence::tuple,
+    ascii::*,
+    token::*,
+    combinator::*,
     Parser,
 };
 
@@ -10,18 +9,14 @@ pub struct Input {
 
 }
 
-fn parse_input(input: &str) -> winnow::IResult<&str, Input> {
-    Ok((
-        input,
-        Input {
-        },
-    ))
+fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
+    todo!()
 }
 
-pub fn input_generator(input: &str) -> Input {
-    let (remaining, result) = parse_input(input).expect("failed to parse input");
-    assert!(remaining.trim().is_empty(), "failed to parse entire input");
-    result
+pub fn input_generator(mut input: &str) -> Input {
+    terminated(parse_input, eof)
+        .parse_next(&mut input)
+        .expect("failed to parse input")
 }
 
 pub fn part_1(input: &Input) -> u32 {
