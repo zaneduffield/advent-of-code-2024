@@ -1,5 +1,5 @@
 use winnow::{
-    bytes::complete::*,
+    token::complete::*,
     character::complete::*,
     multi::*,
     sequence::tuple,

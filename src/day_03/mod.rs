@@ -1,8 +1,7 @@
 use winnow::{
     ascii::dec_uint,
-    branch::alt,
-    bytes::{one_of, tag, take_till1},
-    combinator::opt,
+    combinator::{alt, opt},
+    token::{one_of, tag, take_till, take_till1, take_until},
     Parser,
 };
 
@@ -14,7 +13,7 @@ pub enum Instruction {
     Mul(u32, u32),
 }
 
-fn parse_instruction(input: &str) -> winnow::IResult<&str, Instruction> {
+fn parse_instruction(input: &mut &str) -> winnow::PResult<Instruction> {
     alt((
         tag("do()").map(|_| Instruction::Do),
         tag("don't()").map(|_| Instruction::Dont),
@@ -24,33 +23,29 @@ fn parse_instruction(input: &str) -> winnow::IResult<&str, Instruction> {
     .parse_next(input)
 }
 
-fn take_until_instruction(input: &str) -> winnow::IResult<&str, &str> {
-    opt(take_till1("dm"))
-        .parse_next(input)
-        .map(|(rem, out)| (rem, out.unwrap_or("")))
+fn take_until_instruction<'i>(input: &mut &'i str) -> winnow::PResult<Option<&'i str>> {
+    opt(take_till(0.., ('d', 'm'))).parse_next(input)
 }
 
 // regex would be easier, but this is faster
-fn parse_input(mut input: &str) -> winnow::IResult<&str, Input> {
+fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
     let mut instructions = vec![];
-    while let Ok((next_input, _)) = take_until_instruction(input) {
-        input = next_input;
-        if let Ok((next_input, inst)) = parse_instruction(input) {
-            input = next_input;
+    while let Ok(_) = take_until_instruction(input) {
+        if let Ok(inst) = parse_instruction(input) {
             instructions.push(inst);
         } else if input.is_empty() {
             break;
         } else {
-            input = &input[1..];
+            *input = &input[1..];
         }
     }
 
-    Ok(("", instructions))
+    Ok(instructions)
 }
 
-pub fn input_generator(input: &str) -> Input {
-    let (remaining, result) = parse_input(input).expect("failed to parse input");
-    assert!(remaining.trim().is_empty(), "failed to parse entire input");
+pub fn input_generator(mut input: &str) -> Input {
+    let result = parse_input(&mut input).expect("failed to parse input");
+    assert!(input.trim().is_empty(), "failed to parse entire input");
     result
 }
 

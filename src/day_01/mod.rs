@@ -2,7 +2,6 @@ use itertools::Itertools;
 use winnow::{
     ascii::{dec_uint, line_ending, space1},
     combinator::*,
-    sequence::separated_pair,
     Parser,
 };
 
@@ -11,22 +10,19 @@ pub struct Input {
     right: Vec<u32>,
 }
 
-fn parse_input(input: &str) -> winnow::IResult<&str, Input> {
-    let (input, lines): (&str, Vec<_>) =
+fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
+    let lines: Vec<_> =
         separated0(separated_pair(dec_uint, space1, dec_uint), line_ending).parse_next(input)?;
 
-    Ok((
-        input,
-        Input {
-            left: lines.iter().map(|line| line.0).sorted_unstable().collect(),
-            right: lines.iter().map(|line| line.1).sorted_unstable().collect(),
-        },
-    ))
+    Ok(Input {
+        left: lines.iter().map(|line| line.0).sorted_unstable().collect(),
+        right: lines.iter().map(|line| line.1).sorted_unstable().collect(),
+    })
 }
 
-pub fn input_generator(input: &str) -> Input {
-    let (remaining, result) = parse_input(input).expect("failed to parse input");
-    assert!(remaining.trim().is_empty(), "failed to parse entire input");
+pub fn input_generator(mut input: &str) -> Input {
+    let result = parse_input(&mut input).expect("failed to parse input");
+    assert!(input.trim().is_empty(), "failed to parse entire input");
     result
 }
 

@@ -1,8 +1,7 @@
 use winnow::{
     ascii::{dec_int, line_ending, space1},
-    bytes::tag,
     combinator::*,
-    sequence::separated_pair,
+    token::tag,
     Parser,
 };
 
@@ -12,18 +11,18 @@ pub struct Input {
 
 pub type Eq = (i64, Vec<i64>);
 
-fn parse_input(input: &str) -> winnow::IResult<&str, Input> {
-    let (input, equations) = separated0(
+fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
+    let equations = separated0(
         separated_pair(dec_int, tag(": "), separated1(dec_int::<_, i64, _>, space1)),
         line_ending,
     )
     .parse_next(input)?;
-    Ok((input, Input { equations }))
+    Ok(Input { equations })
 }
 
-pub fn input_generator(input: &str) -> Input {
-    let (remaining, result) = parse_input(input).expect("failed to parse input");
-    assert!(remaining.trim().is_empty(), "failed to parse entire input");
+pub fn input_generator(mut input: &str) -> Input {
+    let result = parse_input(&mut input).expect("failed to parse input");
+    assert!(input.trim().is_empty(), "failed to parse entire input");
     result
 }
 

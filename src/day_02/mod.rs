@@ -14,21 +14,21 @@ pub struct Input {
     reports: Vec<Report>,
 }
 
-fn parse_report(input: &str) -> winnow::IResult<&str, Report> {
+fn parse_report(input: &mut &str) -> winnow::PResult<Report> {
     separated1(dec_uint::<_, u32, _>, space1)
         .map(|nums| Report { nums })
         .parse_next(input)
 }
 
-fn parse_input(input: &str) -> winnow::IResult<&str, Input> {
+fn parse_input(input: &mut &str) -> winnow::PResult<Input> {
     separated0(parse_report, line_ending)
         .map(|reports| Input { reports })
         .parse_next(input)
 }
 
-pub fn input_generator(input: &str) -> Input {
-    let (remaining, result) = parse_input(input).expect("failed to parse input");
-    assert!(remaining.trim().is_empty(), "failed to parse entire input");
+pub fn input_generator(mut input: &str) -> Input {
+    let result = parse_input(&mut input).expect("failed to parse input");
+    assert!(input.trim().is_empty(), "failed to parse entire input");
     result
 }
 

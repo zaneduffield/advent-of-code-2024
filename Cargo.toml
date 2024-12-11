@@ -15,7 +15,7 @@ debug = true
 itertools = "0.13.0"
 fxhash = "0.2.1"
 gcd = "2.3.0"
-winnow = "0.4"
+winnow = "0.5"
 
 [dev-dependencies]
 indoc = "2.0.1"
