@@ -1,9 +1,8 @@
-use nom::{
+use winnow::{
     branch::alt,
-    bytes::complete::{is_not, tag},
-    character::complete::*,
+    bytes::{one_of, tag, take_till1},
+    character::dec_uint,
     combinator::opt,
-    sequence::tuple,
     Parser,
 };
 
@@ -15,21 +14,21 @@ pub enum Instruction {
     Mul(u32, u32),
 }
 
-fn parse_instruction(input: &str) -> nom::IResult<&str, Instruction> {
+fn parse_instruction(input: &str) -> winnow::IResult<&str, Instruction> {
     alt((
         tag("do()").map(|_| Instruction::Do),
         tag("don't()").map(|_| Instruction::Dont),
-        tuple((tag("mul("), u32, char(','), u32, char(')')))
+        (tag("mul("), dec_uint, one_of(','), dec_uint, one_of(')'))
             .map(|(_, left, _, right, _)| Instruction::Mul(left, right)),
     ))(input)
 }
 
-fn take_until_instruction(input: &str) -> nom::IResult<&str, &str> {
-    opt(is_not("dm"))(input).map(|(rem, out)| (rem, out.unwrap_or("")))
+fn take_until_instruction(input: &str) -> winnow::IResult<&str, &str> {
+    opt(take_till1("dm"))(input).map(|(rem, out)| (rem, out.unwrap_or("")))
 }
 
 // regex would be easier, but this is faster
-fn parse_input(mut input: &str) -> nom::IResult<&str, Input> {
+fn parse_input(mut input: &str) -> winnow::IResult<&str, Input> {
     let mut instructions = vec![];
     while let Ok((next_input, _)) = take_until_instruction(input) {
         input = next_input;

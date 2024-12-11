@@ -1,13 +1,18 @@
 use itertools::Itertools;
-use nom::{character::complete::*, multi::*, sequence::separated_pair};
+use winnow::{
+    character::{dec_uint, line_ending, space1},
+    multi::*,
+    sequence::separated_pair,
+};
 
 pub struct Input {
     left: Vec<u32>,
     right: Vec<u32>,
 }
 
-fn parse_input(input: &str) -> nom::IResult<&str, Input> {
-    let (input, lines) = separated_list0(line_ending, separated_pair(u32, space1, u32))(input)?;
+fn parse_input(input: &str) -> winnow::IResult<&str, Input> {
+    let (input, lines): (&str, Vec<_>) =
+        separated0(separated_pair(dec_uint, space1, dec_uint), line_ending)(input)?;
 
     Ok((
         input,

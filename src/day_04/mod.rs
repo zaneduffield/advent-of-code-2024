@@ -2,7 +2,7 @@ pub struct Input {
     data: Vec<Vec<u8>>,
 }
 
-fn parse_input(input: &str) -> nom::IResult<&str, Input> {
+fn parse_input(input: &str) -> winnow::IResult<&str, Input> {
     Ok((
         "",
         Input {

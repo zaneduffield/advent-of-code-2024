@@ -1,5 +1,9 @@
 use itertools::Itertools;
-use nom::{character::complete::*, multi::*, Parser};
+use winnow::{
+    character::{dec_uint, line_ending, space1},
+    multi::*,
+    Parser,
+};
 
 #[derive(Debug)]
 pub struct Report {
@@ -10,16 +14,16 @@ pub struct Input {
     reports: Vec<Report>,
 }
 
-fn parse_report(input: &str) -> nom::IResult<&str, Report> {
-    separated_list1(space1, u32)
+fn parse_report(input: &str) -> winnow::IResult<&str, Report> {
+    separated1(dec_uint::<_, u32, _>, space1)
         .map(|nums| Report { nums })
-        .parse(input)
+        .parse_next(input)
 }
 
-fn parse_input(input: &str) -> nom::IResult<&str, Input> {
-    separated_list0(line_ending, parse_report)
+fn parse_input(input: &str) -> winnow::IResult<&str, Input> {
+    separated0(parse_report, line_ending)
         .map(|reports| Input { reports })
-        .parse(input)
+        .parse_next(input)
 }
 
 pub fn input_generator(input: &str) -> Input {

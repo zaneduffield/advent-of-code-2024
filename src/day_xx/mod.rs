@@ -1,4 +1,4 @@
-use nom::{
+use winnow::{
     bytes::complete::*,
     character::complete::*,
     multi::*,
@@ -10,7 +10,7 @@ pub struct Input {
 
 }
 
-fn parse_input(input: &str) -> nom::IResult<&str, Input> {
+fn parse_input(input: &str) -> winnow::IResult<&str, Input> {
     Ok((
         input,
         Input {

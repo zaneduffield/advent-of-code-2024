@@ -1,4 +1,9 @@
-use nom::{bytes::complete::*, character::complete::*, multi::*, sequence::separated_pair};
+use winnow::{
+    bytes::tag,
+    character::{dec_int, line_ending, space1},
+    multi::*,
+    sequence::separated_pair,
+};
 
 pub struct Input {
     equations: Vec<Eq>,
@@ -6,10 +11,10 @@ pub struct Input {
 
 pub type Eq = (i64, Vec<i64>);
 
-fn parse_input(input: &str) -> nom::IResult<&str, Input> {
-    let (input, equations) = separated_list0(
+fn parse_input(input: &str) -> winnow::IResult<&str, Input> {
+    let (input, equations) = separated0(
+        separated_pair(dec_int, tag(": "), separated1(dec_int::<_, i64, _>, space1)),
         line_ending,
-        separated_pair(i64, tag(": "), separated_list1(space1, i64)),
     )(input)?;
     Ok((input, Input { equations }))
 }
@@ -47,8 +52,8 @@ fn remove_trailing_num(num: i64, on: i64) -> Option<i64> {
     (rem == on).then_some(quot)
 }
 
-fn try_div(num: i64, denom: i64) -> Option<i64> {
-    let (quot, rem) = (num / denom, num % denom);
+fn try_div(num: i64, dewinnow: i64) -> Option<i64> {
+    let (quot, rem) = (num / dewinnow, num % dewinnow);
     (rem == 0).then_some(quot)
 }
 
