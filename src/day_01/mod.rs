@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use winnow::{
-    character::{dec_uint, line_ending, space1},
-    multi::*,
+    ascii::{dec_uint, line_ending, space1},
+    combinator::*,
     sequence::separated_pair,
     Parser,
 };

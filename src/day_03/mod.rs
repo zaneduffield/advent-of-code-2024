@@ -1,7 +1,7 @@
 use winnow::{
+    ascii::dec_uint,
     branch::alt,
     bytes::{one_of, tag, take_till1},
-    character::dec_uint,
     combinator::opt,
     Parser,
 };

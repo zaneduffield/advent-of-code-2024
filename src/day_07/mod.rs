@@ -1,7 +1,7 @@
 use winnow::{
+    ascii::{dec_int, line_ending, space1},
     bytes::tag,
-    character::{dec_int, line_ending, space1},
-    multi::*,
+    combinator::*,
     sequence::separated_pair,
     Parser,
 };
